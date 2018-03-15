@@ -1,0 +1,195 @@
+<!--
+	Copyright(c) 2014-2016 Dinesh Rajkumar Bhosale of getmyscript.com
+	See license file for more information
+	Contact developers at mr.dinesh.bhosale@gmail.com
+-->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Toolkit For Facebook</title>
+		<script type="text/javascript" src="/global/js/jquery.js"></script>
+		<script type="text/javascript" src="/global/js/bootstrap.js"></script>
+		<script type="text/javascript" src="/global/js/global_var.js"></script>
+		<script type="text/javascript" src="/global/js/toastr.js"></script>
+		<script type="text/javascript" src="/global/js/global_func.js"></script>
+		<script type="text/javascript" src="../js/validate.js"></script>
+		<script type="text/javascript" src="../js/popup.js"></script>
+		<link rel="stylesheet" type="text/css" href="/global/css/normalize.css">
+		<link rel="stylesheet" type="text/css" href="/global/css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="/global/css/bootstrap-theme.css">
+		<link rel="stylesheet" type="text/css" href="/global/css/toastr.css">
+		<link rel="stylesheet" type="text/css" href="../css/popup.css">
+	</head>
+	<body>
+		<!--height 60 px -->
+		<nav class="navbar navbar-default topNav">
+			<div class="container-fluid">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="http://fst.getmyscript.com" target="_blank">
+						<span id="extensionName"></span>
+						<span class="version" id="extensionVersion"></span>
+					</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+			</div>
+			<!-- /.container-fluid -->
+		</nav>
+		<div class="innerContainer">
+			<div id="content" class="mainBox">
+				<!-- tabs 50px height-->
+				<ul id="tabs" class="nav nav-tabs" data-tabs="tabs">
+					<li class="active"><a href="#Home" data-toggle="tab"><span class="glyphicon glyphicon-asterisk"></span> Pay Bill  Tools</a></li>
+				</ul>
+				<!-- tab-content start -->
+				<div id="my-tab-content" class="tab-content">
+					<!-- home tab start -->
+					<div class="tab-pane fade in active" id="Home">
+						<!--free facebook account tools -->
+						<div class="panel panel-default">
+							<!--<div class="panel-heading">Free Tools For Facebook Account</div>-->
+							<div class="container-fluid" id="form-panel">
+								<div class="form-group row">
+									<label class='col-sm-2 form-control-label'>SERVER</label>
+									<div class="col-sm-10">
+										<p class="form-control-static">
+												<input type="text" id="txtServerIP" class="form-control" value="" placeholder="SERVER IP"/>
+												<br>
+												<input type="checkbox" id="isFolderPresent"/><strong> OneAdmin</strong> Folder Present on Server ?
+												
+										</p>
+									</div>
+								</div>
+								<div class="form-group row">
+									<label class='col-sm-2 form-control-label'>MONTH/YEAR</label>
+									<div class="col-sm-10">
+										<p class="form-control-static">
+												<select id="slMonth" class="form-control" style="width: 45% !important;display: inline-block;float: left;">
+													<option value="1">JAN</option>
+													<option value="2">FEB</option>
+													<option value="3">MAR</option>
+													<option value="4">APR</option>
+													<option value="5">MAY</option>
+													<option value="6">JUN</option>
+													<option value="7">JUL</option>
+													<option value="8">AUG</option>
+													<option value="1">SEP</option>
+													<option value="10">OCT</option>
+													<option value="11">NOV</option>
+													<option value="12">DEC</option>
+												</select>
+												<select id="slYear" class="form-control" style="width: 45% !important;display: inline-block;float: left;">
+													<option>2018</option>
+													<option>2019</option>
+												</select>
+										</p>
+									</div>
+								</div>
+
+								<div class="form-group row">
+									<label class='col-sm-2 form-control-label'></label>
+									<div class="col-sm-10">
+										<p class="form-control-static">
+												<button type="button" class="btn btn-default toolButtons" id="get-pay-bill">
+													Search Pay Bills
+												</button>
+										</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="container-fluid" id="button-panel" style="display:none;">
+								<div class="buttonContainer">
+									<a href="javascript" id="togglePanelButton">Show Search Form</a>
+								</div>
+								<div class="container-fluid" id="form-panel">
+									<div class="form-group row">
+										<label class='col-sm-2 form-control-label'>PAY BILL</label>
+										<div class="col-sm-10">
+											<p class="form-control-static">
+												<select id="slPayBills" class="form-control"></select>
+											</p>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class='col-sm-2 form-control-label'>Select Item</label>
+										<div class="col-sm-10">
+											<p class="form-control-static">
+												<select id="slFeedingItems" class="form-control">
+													<option value="LIC">LIC</option>
+													<option value="IT">Income Tax</option>
+													<option value="PT">Professional Tax</option>
+													<option value="CCS">Credit Co. Society</option>
+													<option value="COURT">Court Attachment</option>
+												</select>
+											</p>
+										</div>
+									</div>
+									<div class="form-group row">
+										<label class='col-sm-2 form-control-label'></label>
+										<div class="col-sm-10">
+											<p class="form-control-static">
+													<button type="button" class="btn btn-default" id="search_result">Submit</button>
+													<button type="button" class="btn btn-default" id="upload_data" style="display:none;">Upload to EIS</button>
+													<br>
+													<p id="status-msg"></p>
+											</p>
+										</div>
+									</div>
+									<input id="result_json" type="hidden" value=""/>
+									<div id="result" style="width:100%;height:300px;overflow-y:auto;">
+										
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- tab-content end -->
+			</div>
+			<!-- mainbox end-->
+		</div>
+		<!-- container -->
+		<!-- premium box start-->
+		<div id="log_in_box_parent">
+			<form role="form" id="license_log_in_box" action="*">
+				<h1 class="h3" style="
+				text-align: center;
+				">Log In To Unlock Premium Tools</h1>
+				<div class="form-group">
+					<label for="email">Email address:</label>
+					<input type="email" class="form-control" id="email" autocomplete="off">
+				</div>
+				<div class="form-group">
+					<label for="pwd">License Key:</label>
+					<input type="password" class="form-control" id="license_key" autocomplete="off">
+				</div>
+				<button type="submit" class="btn btn-default" id="log_in_unlock">
+					<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+					Log In</button>
+				<button type="submit" class="btn btn-default" id="resetKEY">
+					<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+					Reset License Key</button>
+				<button type="submit" class="btn btn-default" id="resetPWD">
+					<span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+					Reset Password</button>
+				<button type="submit" class="btn btn-primary" id="buyPremium">
+					<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+					Buy Premium Version</button>
+				<button type="submit" class="btn btn-danger" id="closeBtn">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					Close</button>
+				<br>
+			</form>
+		</div>
+		<!-- premium box end -->
+	</body>
+</html>
