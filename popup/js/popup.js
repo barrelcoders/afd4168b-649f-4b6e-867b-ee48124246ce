@@ -167,6 +167,44 @@ function setOneTimeEventListeners() {
 			uploadData();
 		}
 	});
+	$('#txtSearchName').keyup(function(){
+		var input, filter;
+		input = document.getElementById('txtSearchName');
+		filter = input.value.toUpperCase();
+
+		$('#result table tr').find("td:nth-child(2)").each(function(evt, element){
+			element = $(element), row = element.parent('tr'), content = element.html();
+			if (content.toUpperCase().indexOf(filter) > -1) {
+				row.show();
+			} else {
+				row.hide();
+			}
+		});
+	});
+	
+	$('#all_to_zero').click(function(){
+		$('#status-msg').empty();
+		 function updateToZero() {
+			var table = document.querySelector("#display_payitem_data > table");
+			for (var i = 1; i < table.rows.length -1 ; i++) {
+				var row = table.rows[i],
+					codeCell = row.cells[1],
+					amountCell = row.cells[2],
+					amountInput = amountCell.querySelector('input[type=text]');
+					amountInput.value = 0;
+			}
+			
+			return "All values reset to zero successfully";
+		}
+
+		chrome.tabs.executeScript({
+			code: '(' + updateToZero + ')();' 
+		}, (msg) => {
+			$('#status-msg').html(msg);
+			return false;
+		});
+	});
+	
 	
 	chrome.storage.local.get('SERVER_IP', function(a) {
 		if (a.SERVER_IP) {
@@ -176,8 +214,12 @@ function setOneTimeEventListeners() {
 	
 }
 function uploadData(){
-	var json = $('#result_json').val();;
+	var json = $('#result_json').val();
+		$('#status-msg').empty();
+		debugger;
+		
 	 function updateData(data) {
+		 debugger;
 		var table = document.querySelector("#display_payitem_data > table");
 		for (var i = 1; i < table.rows.length -1 ; i++) {
 		    var row = table.rows[i],
@@ -202,7 +244,7 @@ function uploadData(){
     chrome.tabs.executeScript({
         code: '(' + updateData + ')('+json+');' //argument here is a string but function.toString() returns function's code
     }, (msg) => {
-        alert(msg);
+        $('#status-msg').html(msg);
 		return false;
     });
 	
@@ -221,6 +263,7 @@ function loadData(type, method){
 			URL = "http://"+SERVER_IP+"/index.php?r=Bill/"+method+"&id="+BILL_ID;
 		}
 	
+	$('#all_to_zero').hide();
 	$('#upload_data').hide();
 	$('#result').empty();
 	$('#status-msg').html('Please wait while fetching '+type+' data from server');
@@ -235,6 +278,7 @@ function loadData(type, method){
 			var data = JSON.parse(result);
 			if(data.length > 0){
 				$('#upload_data').show();
+				$('#all_to_zero').show();
 				var content = "<table class='table table-striped'><tr><th>S.No.</th><th>Name</th><th>"+type+"</th></tr>";
 				for(var i=0; i<data.length; i++){
 					if(type == 'IT'){
@@ -283,5 +327,4 @@ function loaded() {
 	setOneTimeEventListeners();
 	//updateChecked();
 }
-
 window.onload = loaded;
