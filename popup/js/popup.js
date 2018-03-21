@@ -42,7 +42,7 @@ function startTool(callback){
 		active: true,
 		currentWindow: true
 	};
-	function callbackOne(tabs) {debugger;
+	function callbackOne(tabs) {
 		var currentTab = tabs[0];
 		var tabUrl = currentTab.url;
 		var hr = document.createElement("a");
@@ -109,13 +109,9 @@ function setOneTimeEventListeners() {
 		}
 		
 		chrome.storage.local.get('SERVER_IP', function(a) {
-			if (!a.SERVER_IP) {
-				chrome.storage.local.set({
-					'SERVER_IP': $('#txtServerIP').val()
-				}, function() {
-					debugger;
-				});
-			}
+			chrome.storage.local.set({
+				'SERVER_IP': $('#txtServerIP').val()
+			}, function() {});
 		});
 	
 		
@@ -167,6 +163,12 @@ function setOneTimeEventListeners() {
 			uploadData();
 		}
 	});
+	
+	$('#missing_names_nps, #missing_names_ops').click(function(){
+		$('#status-msg').empty();
+		missingNames();
+	});
+	
 	$('#txtSearchName').keyup(function(){
 		var input, filter;
 		input = document.getElementById('txtSearchName');
@@ -213,15 +215,64 @@ function setOneTimeEventListeners() {
 	});
 	
 }
+function missingNames(){
+	var json = $('#result_json').val();
+		$('#status-msg').empty();
+		
+		
+	 function updateData(data) {
+		var found_array = [];
+		
+		for (var i = 0; i < data.length; i++) {
+			var table = document.querySelector("#display_payitem_data > table");
+			for (var j = 1; j < table.rows.length -1 ; j++) {
+				var row = table.rows[j],
+				codeCell = row.cells[1],
+				codeCellText = codeCell.innerHTML.replace(/\s+/g,' ').trim();
+				if(codeCellText.indexOf(data[i].CODE) > -1){
+					found_array.push(data[i]);
+				}
+			}
+		}
+		
+        return found_array;
+    }
+
+    //We have permission to access the activeTab, so we can call chrome.tabs.executeScript:
+    chrome.tabs.executeScript({
+        code: '(' + updateData + ')('+json+');' //argument here is a string but function.toString() returns function's code
+    }, (found_array) => {
+		var data = JSON.parse($('#result_json').val());
+		var difference = data.filter(comparer(found_array[0]));
+		var total = 0;
+		var content = "<table class='table table-striped'><tr><th>S.No.</th><th>Name</th><th>AMOUNT</th></tr>";
+		for(var i=0; i<difference.length; i++){
+			content += "<tr><td>"+(i+1)+"</td><td><span style='color:#f00;'>"+difference[i]['NAME']+"</span></td><td>"+difference[i]['AMOUNT']+"</td></tr>";
+			total += parseInt(difference[i]['AMOUNT']);
+		}
+		content += "<tr><td></td><td>Total</td><td>"+total+"</td></tr>";
+		content += "</table>";
+		$('#result').html(content);
+				
+		return false;
+    });
+	
+}
+function comparer(otherArray){
+  return function(current){
+    return otherArray.filter(function(other){
+      return other.ID == current.ID && other.NAME == current.NAME && other.CODE == current.CODE && other.AMOUNT == current.AMOUNT;
+    }).length == 0;
+  }
+}
+
 function uploadData(){
 	var json = $('#result_json').val();
 		$('#status-msg').empty();
-		debugger;
 		
 	 function updateData(data) {
-		 debugger;
 		var table = document.querySelector("#display_payitem_data > table");
-		for (var i = 1; i < table.rows.length -1 ; i++) {
+		for (var i = 1; i < table.rows.length -1; i++) {
 		    var row = table.rows[i],
 				codeCell = row.cells[1],
 				amountCell = row.cells[2],
@@ -265,6 +316,8 @@ function loadData(type, method){
 	
 	$('#all_to_zero').hide();
 	$('#upload_data').hide();
+	$('#missing_names_nps').hide();
+	$('#missing_names_ops').hide();
 	$('#result').empty();
 	$('#status-msg').html('Please wait while fetching '+type+' data from server');
 	
@@ -277,17 +330,19 @@ function loadData(type, method){
 			$('#result_json').val(result);
 			var data = JSON.parse(result);
 			if(data.length > 0){
+				var option = $('#slPayBills option:selected').text();
+				if(option.indexOf('OPS') > -1){
+					$('#missing_names_ops').show();
+				}
+				else if(option.indexOf('NPS') > -1){
+					$('#missing_names_nps').show();
+				}
+				
 				$('#upload_data').show();
 				$('#all_to_zero').show();
 				var content = "<table class='table table-striped'><tr><th>S.No.</th><th>Name</th><th>"+type+"</th></tr>";
 				for(var i=0; i<data.length; i++){
-					if(type == 'IT'){
-						var income_tax = Math.round((data[i]['AMOUNT']*100)/103);
-						content += "<tr><td>"+(i+1)+"</td><td>"+data[i]['NAME']+"</td><td>"+income_tax+"</td></tr>";
-					}
-					else{
-						content += "<tr><td>"+(i+1)+"</td><td>"+data[i]['NAME']+"</td><td>"+data[i]['AMOUNT']+"</td></tr>";
-					}
+					content += "<tr><td>"+(i+1)+"</td><td>"+data[i]['NAME']+"</td><td>"+data[i]['AMOUNT']+"</td></tr>";
 					total += parseInt(data[i]['AMOUNT']);
 				}
 				content += "<tr><td></td><td>Total</td><td>"+total+"</td></tr>";
